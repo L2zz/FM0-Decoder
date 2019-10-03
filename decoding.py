@@ -8,7 +8,7 @@ bit_extra = global_vars.bit_extra
 
 
 
-def detect_preamble(signal):
+def detect_preamble(std_samples):
   # preamble mask
   mask = [1.0] * 2 * num_half_bit  # 1
   mask += [-1.0] * num_half_bit  # 2
@@ -31,8 +31,8 @@ def detect_preamble(signal):
     score = 0
     score2 = 0
     for mask_idx in range(len(mask)):
-      score += mask[mask_idx] * signal.std_samples[idx+mask_idx]
-      score2 += mask2[mask_idx] * signal.std_samples[idx+mask_idx]
+      score += mask[mask_idx] * std_samples[idx+mask_idx]
+      score2 += mask2[mask_idx] * std_samples[idx+mask_idx]
     if score > max_score:
       max_idx = idx
       max_score = score
@@ -65,7 +65,8 @@ def detect_data(signal):
   mask1H += [1.0] * 2 * num_half_bit
   mask1H += [-1.0] * num_half_bit
 
-  idx, state = detect_preamble(signal)
+  idx = signal.index
+  state = signal.level
   shift = [-3, -2, -1, 0, 1, 2, 3]  # 디코딩 성공률이 떨어질 경우 shift 범위를 넓힐 수 있음
   cur_shift = 0
   success = 0

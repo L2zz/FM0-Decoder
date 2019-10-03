@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
 import math
 
+import global_vars
+from decoding import detect_preamble
+
+num_half_bit = global_vars.num_half_bit
+num_bit_data = global_vars.bit_data * 2 * num_half_bit
+
+
 class Signal:
   file_name = ""
   answer = ""
+  answer_samples = list()
   samples = list()
   std_samples = list()
+  rev_cut_std_samples = list()
+  index = 0;
+  level = 0;
 
   def __init__(self, file_name, data):
     self.file_name = file_name
@@ -15,6 +26,7 @@ class Signal:
       self.samples.append(data[idx])
     self.samples = [float(i) for i in self.samples]
 
+    # std_samples
     avg = 0
     for sample in self.samples:
       avg += sample
@@ -33,3 +45,25 @@ class Signal:
         self.std_samples[idx] = 1
       if self.std_samples[idx] < -1:
         self.std_samples[idx] = -1
+
+    # detect_preamble & rev_cut_std_samples
+    self.index, self.level = detect_preamble(self.std_samples)
+    self.rev_cut_std_samples = self.std_samples[self.index : self.index + num_bit_data]
+    if self.level == 1:
+      for idx in range(len(self.rev_cut_std_samples)):
+        self.rev_cut_std_samples[idx] *= -1.0
+
+    # answer_samples
+    level = -1
+    for bit in self.answer:
+      for i in range(0, num_half_bit):
+        self.answer_samples.append(level)
+
+      if bit:
+        for i in range(0, num_half_bit):
+          self.answer_samples.append(level)
+      else:
+        level *= -1
+        for i in range(0, num_half_bit):
+          self.answer_samples.append(level)
+      level *= -1
