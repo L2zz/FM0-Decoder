@@ -1,3 +1,4 @@
-data/
-log/
-*.pyc
+data/*
+log/*
+model/*
+python/__pycache__/
