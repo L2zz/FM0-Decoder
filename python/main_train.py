@@ -5,6 +5,7 @@ from SignalSet import SignalSet
 
 from read_file import read_file
 from make_set import make_set
+from make_random_index import make_random_index
 from test_set import test_set
 
 import global_vars
@@ -25,12 +26,16 @@ if __name__ == "__main__":
       input_set.concatenate(input)
       answer_set.concatenate(answer)
 
+    random_index = make_random_index(len(input_set.train))
+    input_set.random_train_set(random_index)
+    answer_set.random_train_set(random_index)
+
     print("\n\n\n\t\t\t***** TRAINING *****")
     autoencoder.train_model(np.array(input_set.train), np.array(answer_set.train), (np.array(input_set.validation), np.array(answer_set.validation)))
 
     success = test_set(autoencoder.test_model(np.array(input_set.test)), answer_set.test)
     print("\n\n\n\t\t\t***** TEST RESULT *****")
-    print(str(success) + " / " + str(len(test_set.test)), end="\n\n\n")
+    print(str(success) + " / " + str(len(input_set.test)), end="\n\n\n")
 
   except Exception as ex:
     print("[main_train.py]", end=" ")

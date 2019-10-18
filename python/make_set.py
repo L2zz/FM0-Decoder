@@ -1,6 +1,6 @@
-import random
-
 from SignalSet import SignalSet
+
+from make_random_index import make_random_index
 
 import global_vars
 file_size = global_vars.file_size
@@ -12,12 +12,7 @@ validation_size = global_vars.validation_size
 
 def make_set(input_signals, answer_signals):
   try:
-    random_index = []
-
-    while len(random_index) != file_size:
-      index = random.randrange(0, file_size)
-      if index not in random_index:
-        random_index.append(index)
+    random_index = make_random_index(file_size)
 
     input_set = SignalSet()
     answer_set = SignalSet()

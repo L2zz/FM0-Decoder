@@ -1,4 +1,4 @@
-data/*
-log/*
-model/*
+data/
+log/
+model/
 python/__pycache__/
