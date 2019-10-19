@@ -1,6 +1,6 @@
 # select model
-tail = "_LH"
-#tail = "_01"
+tail = "_enc256"
+#tail = "_enc128"
 
 
 
@@ -13,14 +13,14 @@ bit_extra = 12
 data_path = "data/190917_nopadding/"
 
 file_name_list = []
-'''
+
 for a in ["50", "100", "150", "200", "250", "300", "350", "400"]:
   for b in ["l", "r"]:
     for c in ["20", "60", "100"]:
       file_name_list.append(a + "_" + b + c)
-'''
-file_name_list.append("50_l20")
-file_name_list.append("50_r20")
+
+#file_name_list.append("50_l20")
+#file_name_list.append("50_r20")
 
 
 

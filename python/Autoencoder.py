@@ -28,7 +28,7 @@ class Autoencoder(tf.keras.Model):
 
 
 
-  def build_model_LH(self):
+  def build_model_enc256(self):
     try:
       size_input_layer = 6400
       size_hidden_layer = 3100
@@ -49,7 +49,35 @@ class Autoencoder(tf.keras.Model):
       return tf.keras.Model(self.input_layer, layer)
 
     except Exception as ex:
-      print("[Autoencoder.build_model]", end=" ")
+      print("[Autoencoder.build_model_LH]", end=" ")
+      print(ex)
+
+
+
+  def build_model_enc128(self):
+    try:
+      size_input_layer = 6400
+      size_hidden_layer = 3100
+      size_output_layer = 128
+
+      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
+      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden1")
+      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden2")
+      self.hidden_layer3 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden3")
+      self.hidden_layer4 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden4")
+      self.hidden_layer5 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden5")
+      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
+
+      layer = self.hidden_layer1(self.input_layer)
+      layer = self.hidden_layer2(layer)
+      layer = self.hidden_layer3(layer)
+      layer = self.hidden_layer4(layer)
+      layer = self.hidden_layer5(layer)
+      layer = self.output_layer(layer)
+      return tf.keras.Model(self.input_layer, layer)
+
+    except Exception as ex:
+      print("[Autoencoder.build_model_01]", end=" ")
       print(ex)
 
 

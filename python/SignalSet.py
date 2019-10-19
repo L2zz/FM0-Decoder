@@ -1,5 +1,3 @@
-import random
-
 class SignalSet:
   def __init__(self):
     self.train = []
@@ -15,5 +13,5 @@ class SignalSet:
     train_backup = self.train[:]
     self.train = []
 
-    for idx in range(0, len(train_backup)):
+    for idx in range(len(train_backup)):
       self.train.append(train_backup[random_index[idx]])
