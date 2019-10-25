@@ -8,6 +8,7 @@ from SignalSet import SignalSet
 from read_file import read_file
 from make_set import make_set
 from test_set import test_set
+from plot_log import plot_log
 
 import global_vars
 file_name_list = global_vars.file_name_list
@@ -45,12 +46,14 @@ if __name__ == "__main__":
 
   print("\n\n\n\t\t\t***** TRAINING *****")
   train_time = ExecutionTime("TRAIN")
-  autoencoder.train_model(np.array(input_set.train), np.array(answer_set.train), (np.array(input_set.validation), np.array(answer_set.validation)))
+  hist = autoencoder.train_model(np.array(input_set.train), np.array(answer_set.train), (np.array(input_set.validation), np.array(answer_set.validation)))
   train_time.stop(True)
 
   test_time = ExecutionTime("TEST")
   success = test_set(autoencoder.test_model(np.array(input_set.test)), answer_set.test)
   test_time.stop(False)
+
+  plot_log(False, np.array(hist.history['loss']), np.array(hist.history['val_loss']), float(success) / len(input_set.test))
 
 
 

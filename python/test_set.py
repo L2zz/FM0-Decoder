@@ -3,7 +3,7 @@ from tqdm import tqdm
 
 import global_vars
 tail = global_vars.tail
-log_path = global_vars.log_path
+log_full_path = global_vars.log_full_path
 
 
 
@@ -32,7 +32,7 @@ def test_set(test, answer):
       if count == len(test[0]):
         success += 1
 
-    file = open(log_path, "w")
+    file = open(log_full_path, "a")
     file.write(str(success) + " / " + str(len(test)) + "\n\n")
     for idx in range(len(test[0]) + 1):
       file.write(str(int(success_bit[idx])) + " ")

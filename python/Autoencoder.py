@@ -6,6 +6,7 @@ tail = global_vars.tail
 model_path = global_vars.model_path
 model_full_path = global_vars.model_full_path
 model_tail = global_vars.model_tail
+log_full_path = global_vars.log_full_path
 
 
 
@@ -49,7 +50,46 @@ class Autoencoder(tf.keras.Model):
       return tf.keras.Model(self.input_layer, layer)
 
     except Exception as ex:
-      print("[Autoencoder.build_model_LH]", end=" ")
+      print("[Autoencoder.build_model_enc256]", end=" ")
+      print(ex)
+
+
+
+  def build_model_enc256_batch(self):
+    try:
+      size_input_layer = 6400
+      size_hidden_layer = 3100
+      size_output_layer = 256
+
+      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
+
+      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden1")
+      self.batch_layer1 = tf.keras.layers.BatchNormalization(name="batch1")
+      self.activation_layer1 = tf.keras.layers.Activation(tf.nn.relu, name="activation1")
+
+      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden2")
+      self.batch_layer2 = tf.keras.layers.BatchNormalization(name="batch2")
+      self.activation_layer2 = tf.keras.layers.Activation(tf.nn.relu, name="activation2")
+
+      self.hidden_layer3 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden3")
+      self.batch_layer3 = tf.keras.layers.BatchNormalization(name="batch3")
+      self.activation_layer3 = tf.keras.layers.Activation(tf.nn.relu, name="activation3")
+
+      self.hidden_layer4 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden4")
+      self.batch_layer4 = tf.keras.layers.BatchNormalization(name="batch4")
+      self.activation_layer4 = tf.keras.layers.Activation(tf.nn.relu, name="activation4")
+
+      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
+
+      layer = self.activation_layer1(self.batch_layer1(self.hidden_layer1(self.input_layer)))
+      layer = self.activation_layer2(self.batch_layer2(self.hidden_layer2(layer)))
+      layer = self.activation_layer3(self.batch_layer3(self.hidden_layer3(layer)))
+      layer = self.activation_layer4(self.batch_layer4(self.hidden_layer4(layer)))
+      layer = self.output_layer(layer)
+      return tf.keras.Model(self.input_layer, layer)
+
+    except Exception as ex:
+      print("[Autoencoder.build_model_enc256_batch]", end=" ")
       print(ex)
 
 
@@ -77,7 +117,7 @@ class Autoencoder(tf.keras.Model):
       return tf.keras.Model(self.input_layer, layer)
 
     except Exception as ex:
-      print("[Autoencoder.build_model_01]", end=" ")
+      print("[Autoencoder.build_model_enc128]", end=" ")
       print(ex)
 
 
@@ -85,9 +125,18 @@ class Autoencoder(tf.keras.Model):
   def train_model(self, input, answer, validation):
     try:
       early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
-      self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
+      hist = self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
       #self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation)
       tf.keras.experimental.export_saved_model(self.model, model_full_path)
+
+      file = open(log_full_path, "w")
+      file.write("loss\n")
+      file.write(str(hist.history['loss']) + "\n\n")
+      file.write("val_loss\n")
+      file.write(str(hist.history['val_loss']) + "\n\n")
+      file.close()
+
+      return hist
 
     except Exception as ex:
       print("[Autoencoder.train_model]", end=" ")
