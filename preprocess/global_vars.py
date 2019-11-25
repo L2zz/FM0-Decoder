@@ -1,6 +1,6 @@
 data_path = "../data/"
 folder_name = "191019"
-target_name = "nopadding"
+target_name = "index_std_nocut"
 source_path = data_path + folder_name + "/"
 target_path = data_path + folder_name + "_" + target_name + "/"
 

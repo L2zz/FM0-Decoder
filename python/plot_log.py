@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_log(log_name_list, loss_list, val_loss_list, success_list):
+def plot_log(log_name_list, loss_list, val_loss_list, success_list, type_list):
   try:
     model_size = len(log_name_list)
 
@@ -14,6 +14,8 @@ def plot_log(log_name_list, loss_list, val_loss_list, success_list):
     plt.subplot(121)
 
     for idx in range(model_size):
+      if not type_list[idx]:
+        break;
       val_loss = val_loss_list[idx]
       epoch = epoch_list[idx]
       plt.plot(np.append(np.roll(val_loss, 1), val_loss[epoch-1]))
@@ -49,10 +51,10 @@ def plot_log(log_name_list, loss_list, val_loss_list, success_list):
     plt.title("success rate")
     plt.grid(which="major", axis="y", linestyle="solid")
     plt.grid(which="minor", axis="y", linestyle="dashed")
-    plt.xlabel("model")
     plt.xticks(np.arange(1, model_size+1), log_name_list)
     plt.xlim(0, model_size+1)
     plt.ylim(0, 1)
+    plt.axhline(0.2997, color="red", linewidth=2)
 
     plt.show()
 

@@ -28,7 +28,7 @@ def detect_preamble(sample):
     max_score = 0
     state = 0
 
-    for idx in range(num_bit_extra):
+    for idx in range(50, 100):
       score = 0
       score2 = 0
       for mask_idx in range(len(mask)):

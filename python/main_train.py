@@ -53,7 +53,7 @@ if __name__ == "__main__":
   success = test_set(autoencoder.test_model(np.array(input_set.test)), answer_set.test)
   test_time.stop(False)
 
-  plot_log(False, np.array(hist.history['loss']), np.array(hist.history['val_loss']), float(success) / len(input_set.test))
+  plot_log(["model"], [np.array(hist.history['loss'])], [np.array(hist.history['val_loss'])], [float(success) / len(input_set.test)], [True])
 
 
 
