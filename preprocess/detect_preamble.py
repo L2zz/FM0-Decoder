@@ -27,6 +27,8 @@ def detect_preamble(sample):
 
   max_idx = 0
   max_score = 0
+  max_score_1 = 0
+  max_score_2 = 0
   state = 0
 
   #for idx in range(num_bit_extra):
@@ -39,10 +41,14 @@ def detect_preamble(sample):
     if score > max_score:
       max_idx = idx
       max_score = score
+      max_score_1 = score
+      max_score_2 = score2
       state = -1
     if score2 > max_score:
       max_idx = idx
       max_score = score2
+      max_score_1 = score
+      max_score_2 = score2
       state = 1
 
-  return max_idx + num_bit_preamble, state
+  return max_idx + num_bit_preamble, state, max_score_1, max_score_2

@@ -25,10 +25,10 @@ def standardize_sample(signal):
     new_sample = []
     for sample in signal[idx]:
       value = (sample - avg) / std
-      #if value > 1: new_sample.append(float(1))
-      #elif value < -1: new_sample.append(float(-1))
-      #else: new_sample.append(value)
-      new_sample.append(value)
+      if value > 1: new_sample.append(float(1))
+      elif value < -1: new_sample.append(float(-1))
+      else: new_sample.append(value)
+      #new_sample.append(value)
 
     new_signal.append(new_sample)
 

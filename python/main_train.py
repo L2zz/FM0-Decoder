@@ -50,7 +50,7 @@ if __name__ == "__main__":
   train_time.stop(True)
 
   test_time = ExecutionTime("TEST")
-  success = test_set(autoencoder.test_model(np.array(input_set.test)), answer_set.test)
+  success, ber = test_set(autoencoder.test_model(np.array(input_set.test)), answer_set.test)
   test_time.stop(False)
 
   plot_log(["model"], [np.array(hist.history['loss'])], [np.array(hist.history['val_loss'])], [float(success) / len(input_set.test)], [True])
@@ -61,6 +61,7 @@ if __name__ == "__main__":
   print("\n\n\n\t\t***** SUMMARY *****")
   print("\tTEST RESULT:\t" + str(success) + " / " + str(len(input_set.test)), end=" ")
   print("(" + str(round(100 * (float(success) / len(input_set.test)), 2)) + "%)")
+  print("\tBER:\t\t" + str(round(100*ber, 2)) + "%")
   print("\t\t*****\t*****\t*****")
   tot_time.print()
   print("\t\t*****\t*****\t*****")

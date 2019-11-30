@@ -1,6 +1,6 @@
 data_path = "../data/"
 folder_name = "191019"
-target_name = "index_std_nocut"
+target_name = "reverse_preamble_std_index"
 source_path = data_path + folder_name + "/"
 target_path = data_path + folder_name + "_" + target_name + "/"
 
@@ -15,6 +15,7 @@ bit_extra = 12
 
 file_size = 3000
 file_name_list = []
+
 
 for a in ["100", "200", "300", "400"]:
     for b in ["0", "l100", "r100"]:

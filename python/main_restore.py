@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
   print("\n\n\n\t\t\t***** TEST MODEL *****")
   test_time = ExecutionTime("TEST")
-  success = test_set(autoencoder.test_model(np.array(input_set)), answer_set)
+  success, ber = test_set(autoencoder.test_model(np.array(input_set)), answer_set)
   test_time.stop(False)
 
 
@@ -70,6 +70,7 @@ if __name__ == "__main__":
   print("\n\n\n\t\t***** SUMMARY *****")
   print("\tTEST RESULT:\t" + str(success) + " / " + str(len(input_set)), end=" ")
   print("(" + str(round(100 * (float(success) / len(input_set)), 2)) + "%)")
+  print("\tBER:\t\t" + str(round(100*ber, 2)) + "%")
   print("\t\t*****\t*****\t*****")
   tot_time.print()
   print("\t\t*****\t*****\t*****")
