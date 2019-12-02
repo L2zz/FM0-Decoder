@@ -1,80 +1,59 @@
 import numpy as np
+from global_vars import *
 from tqdm import tqdm
 
-import global_vars
-tail = global_vars.tail
-log_full_path = global_vars.log_full_path
 
 
-
-def test_sample(test, answer, unit):
+def test_sample(test, answer):
   try:
     count = 0
-    #for idx in range(0, len(test), unit):
-    for idx in range(12*unit, len(test), unit):
+    if sample_type == "org":
+      start_idx = 12 * repetition
+    elif sample_type == "128bit":
+      start_idx = 0
+
+    for idx in range(start_idx, len(test), repetition):
       unit_count = 0
-      for unit_idx in range(unit):
+      for unit_idx in range(repetition):
         if (test[idx+unit_idx] < 0.5 and answer[idx+unit_idx] == 0) or (test[idx+unit_idx] >= 0.5 and answer[idx+unit_idx] == 1):
           unit_count += 1
-      if unit_count / unit > 0.5:
+      if unit_count / repetition > 0.5:
         count += 1
     return count
 
   except Exception as ex:
-    print("[test_sample.py]", end=" ")
+    print("[test_set.py: test_sample]", end=" ")
     print(ex)
 
 
 
-def test_set(test, answer):
-  if tail == "_enc256":
-    try:
-      success = 0
-      success_bit = np.zeros(257)
+def test_set(file_name, test, answer):
+  try:
+    success = 0
+    success_bit = np.zeros(257)
 
-      for idx in tqdm(range(len(test)), desc="TESTING", ncols=80, unit="signal"):
-        count = test_sample(test[idx], answer[idx], 1)
-        success_bit[count] += 1
-        if count == 256:
-          success += 1
+    for idx in tqdm(range(len(test)), desc="TESTING", ncols=80, unit="signal"):
+      count = test_sample(test[idx], answer[idx])
+      success_bit[count] += 1
+      if count == 256:
+        success += 1
 
-      file = open(log_full_path, "a")
-      file.write(str(success) + " / " + str(len(test)) + "\n\n")
-      for idx in range(257):
-        file.write(str(int(success_bit[idx])) + " ")
+    file = open(log_full_path, "a")
+    file.write("\t\t\t***** " + file_name + " *****\n\n")
+    file.write(str(success) + " / " + str(len(test)))
+    file.write(" (" + str(round(100 * (float(success) / len(test)), 2)) + "%)\n\n")
+    for idx in range(257):
+      file.write(str(int(success_bit[idx])) + " ")
 
-      ber = 0
-      for idx in range(257):
-        ber += idx * success_bit[idx]
-      ber = 1 - ber / (len(test) * 256)
-      file.write("\n\nBER: " + str(ber))
+    ber = 0
+    for idx in range(257):
+      ber += idx * success_bit[idx]
+    ber = 1 - ber / (len(test) * 256)
+    file.write("\n\nBER: " + str(ber) + "\n\n")
+    file.close()
 
-      return success, ber
+    return success, success_bit, ber
 
-    except Exception as ex:
-      print("[test_set.py]", end=" ")
-      print(ex)
-
-
-
-  if tail == "_enc256_5":
-    try:
-      success = 0
-      success_bit = np.zeros(257)
-
-      for idx in tqdm(range(len(test)), desc="TESTING", ncols=80, unit="signal"):
-        count = test_sample(test[idx], answer[idx], 5)
-        success_bit[count] += 1
-        if count == 256:
-          success += 1
-
-      file = open(log_full_path, "a")
-      file.write(str(success) + " / " + str(len(test)) + "\n\n")
-      for idx in range(257):
-        file.write(str(int(success_bit[idx])) + " ")
-
-      return success
-
-    except Exception as ex:
-      print("[test_set.py]", end=" ")
-      print(ex)
+  except Exception as ex:
+    print("[test_set.py]", end=" ")
+    print(ex)

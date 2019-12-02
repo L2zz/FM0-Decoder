@@ -1,9 +1,5 @@
+from global_vars import *
 from tqdm import tqdm
-
-import global_vars
-tail = global_vars.tail
-data_path = global_vars.data_path
-file_size = global_vars.file_size
 
 
 
@@ -21,7 +17,10 @@ def read_file(file_name):
 
     file.close()
 
-    file = open(data_path + file_name + "_answer" + tail, "r")
+    if repetition == 1:
+      file = open(data_path + file_name + "_answer" + tail, "r")
+    else:
+      file = open(data_path + file_name + "_answer" + tail + "_" + repetition, "r")
     answer_signals = []
 
     for n in range(file_size):

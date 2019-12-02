@@ -1,17 +1,8 @@
 import tensorflow as tf
 import datetime
-
-import global_vars
-tail = global_vars.tail
-model_path = global_vars.model_path
-model_full_path = global_vars.model_full_path
-model_tail = global_vars.model_tail
-log_full_path = global_vars.log_full_path
+from global_vars import *
 
 
-
-learning_rate = 0.00005
-learning_epoch = 60
 
 class Autoencoder(tf.keras.Model):
   def __init__(self):
@@ -19,7 +10,7 @@ class Autoencoder(tf.keras.Model):
       super(Autoencoder, self).__init__()
 
       optimizer = tf.keras.optimizers.Adam(learning_rate)
-      self.model = eval("self.build_model" + tail + model_tail)()
+      self.model = eval("self.build_model" + tail)()
       self.model.compile(loss="mse", optimizer=optimizer)
       self.model.summary()
 
@@ -31,50 +22,6 @@ class Autoencoder(tf.keras.Model):
 
   def build_model_enc256(self):
     try:
-      size_input_layer = 6400
-      size_hidden_layer = 256
-      size_hidden_layer2 = 3200
-      size_output_layer = 256
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden1")
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer2, activation=tf.nn.relu, name="hidden2")
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.hidden_layer1(self.input_layer)
-      layer = self.hidden_layer2(layer)
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc256]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc256_batch(self):
-    try:
-
-      size_input_layer = 7300
-      size_hidden_layer = 3650
-      size_hidden_layer2 = 3650
-      size_hidden_layer3 = 6700
-      size_hidden_layer4 = 6700
-      size_hidden_layer5 = 1340
-      size_hidden_layer6 = 1340
-      size_output_layer = 268
-      '''
-      size_input_layer = 6400
-      size_hidden_layer = 3200
-      size_hidden_layer2 = 256
-      size_hidden_layer3 = 3200
-      size_hidden_layer4 = 256
-      size_hidden_layer5 = 3200
-      size_hidden_layer6 = 0
-      size_output_layer = 256
-      '''
-      dropout_rate = 0.1
-
       self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
 
       self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden1")
@@ -114,164 +61,24 @@ class Autoencoder(tf.keras.Model):
       layer = self.dropout_layer3(self.activation_layer3(self.batch_layer3(self.hidden_layer3(layer))))
       layer = self.dropout_layer4(self.activation_layer4(self.batch_layer4(self.hidden_layer4(layer))))
       layer = self.dropout_layer5(self.activation_layer5(self.batch_layer5(self.hidden_layer5(layer))))
-      layer = self.dropout_layer6(self.activation_layer6(self.batch_layer6(self.hidden_layer6(layer))))
+      if sample_type == "org":
+        layer = self.dropout_layer6(self.activation_layer6(self.batch_layer6(self.hidden_layer6(layer))))
       layer = self.output_layer(layer)
       return tf.keras.Model(self.input_layer, layer)
 
     except Exception as ex:
-      print("[Autoencoder.build_model_enc256_batch]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc256_5(self):
-    try:
-      size_input_layer = 6400
-      size_hidden_layer = 256
-      size_hidden_layer2 = 3200
-      size_output_layer = 1280
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden1")
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer2, activation=tf.nn.relu, name="hidden2")
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.hidden_layer1(self.input_layer)
-      layer = self.hidden_layer2(layer)
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc256_5]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc256_5_batch(self):
-    try:
-      size_input_layer = 6400
-      size_hidden_layer = 256
-      size_hidden_layer2 = 3200
-      size_output_layer = 1280
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden1")
-      self.batch_layer1 = tf.keras.layers.BatchNormalization(name="batch1")
-      self.activation_layer1 = tf.keras.layers.Activation(tf.nn.relu, name="activation1")
-
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer2, name="hidden2")
-      self.batch_layer2 = tf.keras.layers.BatchNormalization(name="batch2")
-      self.activation_layer2 = tf.keras.layers.Activation(tf.nn.relu, name="activation2")
-
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.activation_layer1(self.batch_layer1(self.hidden_layer1(self.input_layer)))
-      layer = self.activation_layer2(self.batch_layer2(self.hidden_layer2(layer)))
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc256_5_batch]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc256_5_dropout(self):
-    try:
-      size_input_layer = 6400
-      size_hidden_layer = 256
-      size_hidden_layer2 = 3200
-      size_output_layer = 1280
-      dropout_rate = 0.1
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden1")
-      self.dropout_layer1 = tf.keras.layers.Dropout(dropout_rate, name="dropout1")
-
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer2, activation=tf.nn.relu, name="hidden2")
-      self.dropout_layer2 = tf.keras.layers.Dropout(dropout_rate, name="dropout2")
-
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.dropout_layer1(self.hidden_layer1(self.input_layer))
-      layer = self.dropout_layer2(self.hidden_layer2(layer))
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc256_5_dropout]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc256_5_dropout_batch(self):
-    try:
-      size_input_layer = 6400
-      size_hidden_layer = 256
-      size_hidden_layer2 = 3200
-      size_output_layer = 1280
-      dropout_rate = 0.1
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, name="hidden1")
-      self.batch_layer1 = tf.keras.layers.BatchNormalization(name="batch1")
-      self.activation_layer1 = tf.keras.layers.Activation(tf.nn.relu, name="activation1")
-      self.dropout_layer1 = tf.keras.layers.Dropout(dropout_rate, name="dropout1")
-
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer2, name="hidden2")
-      self.batch_layer2 = tf.keras.layers.BatchNormalization(name="batch2")
-      self.activation_layer2 = tf.keras.layers.Activation(tf.nn.relu, name="activation2")
-      self.dropout_layer2 = tf.keras.layers.Dropout(dropout_rate, name="dropout2")
-
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.dropout_layer1(self.activation_layer1(self.batch_layer1(self.hidden_layer1(self.input_layer))))
-      layer = self.dropout_layer2(self.activation_layer2(self.batch_layer2(self.hidden_layer2(layer))))
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc256_5_dropout_batch]", end=" ")
-      print(ex)
-
-
-
-  def build_model_enc128(self):
-    try:
-      size_input_layer = 6400
-      size_hidden_layer = 3100
-      size_output_layer = 128
-
-      self.input_layer = tf.keras.layers.Input(shape=(size_input_layer,), name="input")
-      self.hidden_layer1 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden1")
-      self.hidden_layer2 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden2")
-      self.hidden_layer3 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden3")
-      self.hidden_layer4 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden4")
-      self.hidden_layer5 = tf.keras.layers.Dense(units=size_hidden_layer, activation=tf.nn.relu, name="hidden5")
-      self.output_layer = tf.keras.layers.Dense(units=size_output_layer, name="output")
-
-      layer = self.hidden_layer1(self.input_layer)
-      layer = self.hidden_layer2(layer)
-      layer = self.hidden_layer3(layer)
-      layer = self.hidden_layer4(layer)
-      layer = self.hidden_layer5(layer)
-      layer = self.output_layer(layer)
-      return tf.keras.Model(self.input_layer, layer)
-
-    except Exception as ex:
-      print("[Autoencoder.build_model_enc128]", end=" ")
+      print("[Autoencoder.build_model_enc256]", end=" ")
       print(ex)
 
 
 
   def train_model(self, input, answer, validation):
     try:
-      #early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
-      #hist = self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
-      hist = self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation)
+      if isEarlyStop:
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
+        hist = self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
+      else:
+        hist = self.model.fit(input, answer, epochs=learning_epoch, validation_data=validation)
       tf.keras.experimental.export_saved_model(self.model, model_full_path)
 
       file = open(log_full_path, "w")
