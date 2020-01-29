@@ -12,7 +12,7 @@ bit_extra = 12
 
 
 
-file_size = 3000
+file_size = 1000
 file_name_list = []
 
 for a in ["100", "200", "300", "400"]:

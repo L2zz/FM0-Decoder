@@ -1,6 +1,6 @@
 import numpy as np
 
-tot_size = 3000
+tot_size = 1000
 test_ratio = 0.2
 val_ratio = 0.2
 

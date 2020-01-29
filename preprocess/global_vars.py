@@ -1,8 +1,8 @@
 data_path = "../data/"
 folder_name = "191019"
 target_name = "D_org_std"
-RN_tail = "_RN1"
-RN_set = "RN_3000_1"
+RN_tail = "_RN2"
+RN_set = "RN_1000_1"
 source_path = data_path + folder_name + "/"
 target_path = data_path + target_name + "/"
 RN_path = data_path + "random_index/" + RN_set
@@ -16,8 +16,8 @@ bit_extra = 12
 
 
 
-file_size = 3000
-test_set_size = 600
+file_size = 1000
+test_set_size = 200
 file_name_list = []
 
 
