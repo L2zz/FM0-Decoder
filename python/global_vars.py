@@ -14,11 +14,11 @@ isEarlyStop = True
 dropout_rate = 0.
 
 if isCNN:
-    learning_rate = 0.0001
+    learning_rate = 0.001
     learning_epoch = 100
     batch_size = 200
 
-    size_kernel = 3
+    size_kernel = 5
     size_pool = 2
     padding = "same"
 
