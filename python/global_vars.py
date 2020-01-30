@@ -10,13 +10,14 @@ repetition = 1
 
 # Network
 isCNN = True
+isRNN = True
 isEarlyStop = True
 dropout_rate = 0.
 
 if isCNN:
     learning_rate = 0.0001
     learning_epoch = 100
-    batch_size = 200
+    batch_size = 20
 
     size_kernel = 3
     size_pool = 2
@@ -42,7 +43,12 @@ if isCNN:
     size_fc_layer1 = 1024
     size_fc_layer2 = 1024
 
+    size_lstm_output = 268
     size_output_layer = 268
+
+if isRNN:
+
+    size_time_steps = 4
 
 elif sample_type == "org":
     learning_rate = 0.00005

@@ -3,3 +3,11 @@ comparative/correlation_based/log/
 data/
 log/
 model/
+
+plot.py
+rename.py
+restore.py
+train.py
+
+.ftpconfig
+.ftpignore

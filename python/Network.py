@@ -150,7 +150,6 @@ class Network(tf.keras.Model):
                 dropout_rate, name="dropout8")
             self.pooling_layer4 = tf.keras.layers.MaxPooling1D(size_pool)
 
-
             self.conv_layer9 = tf.keras.layers.Conv1D(
                 self.c9, kernel_size=size_kernel, padding=padding, name="conv9")
             self.batch_layer9 = tf.keras.layers.BatchNormalization(
@@ -189,6 +188,9 @@ class Network(tf.keras.Model):
             self.dropout_layerf2 = tf.keras.layers.Dropout(
                 dropout_rate, name="dropoutf2")
 
+            self.lstm_reshape = tf.keras.layers.Reshape((self.fc2, 1))
+            self.lstm = tf.keras.layers.LSTM(
+                units=size_lstm_output, batch_input_shape=(batch_size, size_time_steps, 1))
             self.output_layer = tf.keras.layers.Dense(
                 units=size_output_layer, name="output")
 
@@ -227,6 +229,9 @@ class Network(tf.keras.Model):
                 self.batch_layerf1(self.fc_layer1(layer))))
             layer = self.dropout_layerf2(self.activation_layerf2(
                 self.batch_layerf2(self.fc_layer2(layer))))
+
+            layer = self.lstm_reshape(layer)
+            layer = self.lstm(layer)
             layer = self.output_layer(layer)
 
             return tf.keras.Model(self.input_layer, layer)
