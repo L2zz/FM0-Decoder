@@ -13,7 +13,7 @@ num_half_bit = 25
 bit_preamble = 6
 bit_data = 128
 bit_extra = 12
-
+extra_length = bit_extra * num_half_bit * 2
 
 
 file_size = 1000
