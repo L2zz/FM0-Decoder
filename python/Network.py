@@ -123,7 +123,6 @@ class Network(tf.keras.Model):
                 dropout_rate, name="dropout8")
             self.pooling_layer4 = tf.keras.layers.MaxPooling1D(size_pool)
 
-
             self.conv_layer9 = tf.keras.layers.Conv1D(
                 self.c9, kernel_size=size_kernel, padding=padding, name="conv9")
             self.batch_layer9 = tf.keras.layers.BatchNormalization(
@@ -210,16 +209,16 @@ class Network(tf.keras.Model):
 
     def train_model(self, input, answer, validation):
         try:
+            best = tf.keras.callbacks.ModelCheckpoint(filepath=model_full_path, monitor='val_loss',
+                                                      verbose=1, save_best_only=True)
             if isEarlyStop:
                 early_stopping = tf.keras.callbacks.EarlyStopping(
                     monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
                 hist = self.model.fit(input, answer, batch_size=batch_size,
-                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
+                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping, best])
             else:
                 hist = self.model.fit(input, answer, batch_size=batch_size,
-                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
-            tf.keras.experimental.export_saved_model(
-                self.model, model_full_path)
+                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping, best])
 
             file = open(log_full_path, "w")
             file.write("loss\n")
@@ -234,15 +233,17 @@ class Network(tf.keras.Model):
             print("[Network.train_model]", end=" ")
             print(ex)
 
-    def restore_model(self, path):
+    def restore_model(self, name):
         try:
-            self.model = tf.keras.experimental.load_from_saved_model(
-                model_path + path)
-            self.model.summary()
+            self.model = tf.keras.models.load_model(model_path + name)
+            print("[Loading Success]")
 
         except Exception as ex:
             print("[Network.restore_model]", end=" ")
             print(ex)
+            self.model = tf.keras.experimental.load_from_saved_model(
+                model_path + name)
+            print("[Loading Success]")
 
     def test_model(self, input):
         try:

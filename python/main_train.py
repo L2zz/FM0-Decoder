@@ -91,6 +91,8 @@ if __name__ == "__main__":
         test_time = ExecutionTime("TEST")
         input_set.test = np.array(input_set.test)
         answer_set.test = np.array(answer_set.test)
+        network = Network()
+        network.restore_model(execute_time)
         success, success_bit, ber = test_set(
             "SUMMARY", network.test_model(input_set.test), answer_set.test)
         test_time.stop(False)

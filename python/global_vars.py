@@ -41,6 +41,7 @@ if isCNN:
 
     size_fc_layer1 = 1024
     size_fc_layer2 = 1024
+    size_fc_layer3 = 1024
 
     size_output_layer = 268
 
@@ -79,6 +80,7 @@ num_half_bit = 25
 bit_preamble = 6
 bit_data = 128
 bit_extra = 12
+extra_length = bit_extra * num_half_bit * 2
 
 """
 Set data path
