@@ -38,7 +38,7 @@ class Network(tf.keras.Model):
             self.fc3 = size_fc_layer3
 
             optimizer = tf.keras.optimizers.Adam(learning_rate)
-            self.model = eval("self.build_model_cnn" + type)()
+            self.model = self.build_model()
             self.model.compile(loss="mse", optimizer=optimizer)
             self.model.summary()
 
@@ -65,7 +65,7 @@ class Network(tf.keras.Model):
             self.fc3 = fc
 
             optimizer = tf.keras.optimizers.Adam(learning_rate)
-            self.model = eval("self.build_model_cnn" + type)()
+            self.model = self.build_model()
             self.model.compile(loss="mse", optimizer=optimizer)
             self.model.summary()
 
@@ -73,7 +73,7 @@ class Network(tf.keras.Model):
             print("[Network.__init__]", end=" ")
             print(ex)
 
-    def build_model_cnn_vgg(self):
+    def build_model(self):
         try:
             self.input_layer = tf.keras.layers.Input(
                 shape=(size_input_layer, 1), name="input")
