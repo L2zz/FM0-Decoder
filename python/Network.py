@@ -19,50 +19,23 @@ class Network(tf.keras.Model):
     fc2 = 0
     fc3 = 0
 
-    def __init__(self):
+    def __init__(self, c1=None, c2=None, c3=None, c4=None, fc=None):
         try:
             super(Network, self).__init__()
 
-            self.c1 = size_conv_layer1
-            self.c2 = size_conv_layer2
-            self.c3 = size_conv_layer3
-            self.c4 = size_conv_layer4
-            self.c5 = size_conv_layer5
-            self.c6 = size_conv_layer6
-            self.c7 = size_conv_layer7
-            self.c8 = size_conv_layer8
-            self.c9 = size_conv_layer9
-            self.c10 = size_conv_layer10
-            self.fc1 = size_fc_layer1
-            self.fc2 = size_fc_layer2
-            self.fc3 = size_fc_layer3
-
-            optimizer = tf.keras.optimizers.Adam(learning_rate)
-            self.model = self.build_model()
-            self.model.compile(loss="mse", optimizer=optimizer)
-            self.model.summary()
-
-        except Exception as ex:
-            print("[Network.__init__]", end=" ")
-            print(ex)
-
-    def __init__(self, c1, c2, c3, c4, fc):
-        try:
-            super(Network, self).__init__()
-
-            self.c1 = c1
-            self.c2 = c1
-            self.c3 = c2
-            self.c4 = c2
-            self.c5 = c3
-            self.c6 = c3
-            self.c7 = c3
-            self.c8 = c4
-            self.c9 = c4
-            self.c10 = c4
-            self.fc1 = fc
-            self.fc2 = fc
-            self.fc3 = fc
+            self.c1 = size_conv_layer1 if c1 is None else c1
+            self.c2 = size_conv_layer2 if c1 is None else c1
+            self.c3 = size_conv_layer3 if c2 is None else c2
+            self.c4 = size_conv_layer4 if c2 is None else c2
+            self.c5 = size_conv_layer5 if c3 is None else c3
+            self.c6 = size_conv_layer6 if c3 is None else c3
+            self.c7 = size_conv_layer7 if c4 is None else c4
+            self.c8 = size_conv_layer8 if c4 is None else c4
+            self.c9 = size_conv_layer9 if c4 is None else c4
+            self.c10 = size_conv_layer10 if c4 is None else c4
+            self.fc1 = size_fc_layer1 if fc is None else fc
+            self.fc2 = size_fc_layer2 if fc is None else fc
+            self.fc3 = size_fc_layer3 if fc is None else fc
 
             optimizer = tf.keras.optimizers.Adam(learning_rate)
             self.model = self.build_model()
