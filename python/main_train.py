@@ -75,16 +75,10 @@ if __name__ == "__main__":
     try:
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
-        if isCNN:
-            input_set.train = np.array(input_set.train)[:, :, np.newaxis]
-            answer_set.train = np.array(answer_set.train)
-            input_set.validation = np.array(input_set.validation)[:, :, np.newaxis]
-            answer_set.validation = np.array(answer_set.validation)
-        else:
-            input_set.train = np.array(input_set.train)
-            answer_set.train = np.array(answer_set.train)
-            input_set.validation = np.array(input_set.validation)
-            answer_set.validation = np.array(answer_set.validation)
+        input_set.train = np.array(input_set.train)
+        answer_set.train = np.array(answer_set.train)
+        input_set.validation = np.array(input_set.validation)
+        answer_set.validation = np.array(answer_set.validation)
         hist = network.train_model(
             input_set.train, answer_set.train, (input_set.validation, answer_set.validation))
         train_time.stop(True)
@@ -95,12 +89,8 @@ if __name__ == "__main__":
 
     try:
         test_time = ExecutionTime("TEST")
-        if isCNN:
-            input_set.test = np.array(input_set.test)[:, :, np.newaxis]
-            answer_set.test = np.array(answer_set.test)
-        else:
-            input_set.test = np.array(input_set.test)
-            answer_set.test = np.array(answer_set.test)
+        input_set.test = np.array(input_set.test)
+        answer_set.test = np.array(answer_set.test)
         success, success_bit, ber = test_set(
             "SUMMARY", network.test_model(input_set.test), answer_set.test)
         test_time.stop(False)

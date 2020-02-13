@@ -12,7 +12,7 @@ def read_file(file_name):
       line = file.readline().rstrip(" \n")
       if not line: break
       data = line.split(" ")
-      data = [float(i) for i in data]
+      data = [[float(i)] for i in data]
       input_signals.append(data)
 
     file.close()
