@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
   try:
     # _target_name = "_sample"
-    _target_name = "_answer_enc256"
+    _target_name = "_answer_ae"
 
     for file_name in file_name_list:
       try:
