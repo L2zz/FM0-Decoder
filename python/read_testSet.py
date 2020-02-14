@@ -10,7 +10,7 @@ def read_testSet(file_name):
 
     for n in tqdm(range(test_size), desc=file_name, ncols=80, unit="signal"):
       line = file.readline().rstrip(" \n").split(" ")
-      data = [float(i) for i in line]
+      data = [[float(i)] for i in line]
       input_signals.append(data)
 
     file.close()

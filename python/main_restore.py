@@ -46,12 +46,8 @@ if __name__ == "__main__":
         for file_name in file_name_list:
             try:
                 input, answer = read_testSet(file_name)
-                if isCNN:
-                    input = np.array(input)[:, :, np.newaxis]
-                    answer = np.array(answer)
-                else:
-                    input = np.array(input)
-                    answer = np.array(answer)
+                input = np.array(input)
+                answer = np.array(answer)
                 success, success_bit, ber = test_set(
                     file_name, network.test_model(input), answer)
 
