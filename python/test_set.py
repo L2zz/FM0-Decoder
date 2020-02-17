@@ -1,24 +1,21 @@
+import sys
 import numpy as np
 from global_vars import *
 from tqdm import tqdm
 
-
+sys.path.append("/home/l2zz/mnt/sin-decode/comparative/correlation_based/python")
+from decode_data import decode_data
 
 def test_sample(test, answer):
   try:
     count = 0
-    if sample_type == "org":
-      start_idx = 12 * repetition
-    elif sample_type == "128bit":
-      start_idx = 0
 
-    for idx in range(start_idx, len(test), repetition):
-      unit_count = 0
-      for unit_idx in range(repetition):
-        if (test[idx+unit_idx] < 0.5 and answer[idx+unit_idx] == 0) or (test[idx+unit_idx] >= 0.5 and answer[idx+unit_idx] == 1):
-          unit_count += 1
-      if unit_count / repetition > 0.5:
-        count += 1
+    decoded_bit = decode_data(test.reshape(test.shape[0]))
+
+    for bit_idx in range(bit_data):
+      if decoded_bit[bit_idx] == answer[bit_idx]:
+          count += 1
+
     return count
 
   except Exception as ex:
@@ -30,25 +27,25 @@ def test_sample(test, answer):
 def test_set(file_name, test, answer):
   try:
     success = 0
-    success_bit = np.zeros(257)
+    success_bit = np.zeros(129)
 
     for idx in tqdm(range(len(test)), desc="TESTING", ncols=80, unit="signal"):
-      count = test_sample(test[idx], answer[idx])
+      count = test_sample(test[idx][0], answer[idx])
       success_bit[count] += 1
-      if count == 256:
+      if count == 128:
         success += 1
 
     file = open(log_full_path, "a")
     file.write("\t\t\t***** " + file_name + " *****\n\n")
     file.write(str(success) + " / " + str(len(test)))
     file.write(" (" + str(round(100 * (float(success) / len(test)), 2)) + "%)\n\n")
-    for idx in range(257):
+    for idx in range(129):
       file.write(str(int(success_bit[idx])) + " ")
 
     ber = 0
-    for idx in range(257):
+    for idx in range(129):
       ber += idx * success_bit[idx]
-    ber = 1 - ber / (len(test) * 256)
+    ber = 1 - ber / (len(test) * 128)
     file.write("\n\nBER: " + str(ber) + "\n\n")
     file.close()
 

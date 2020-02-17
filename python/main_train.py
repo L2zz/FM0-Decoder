@@ -2,6 +2,7 @@ import os
 import sys
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 from global_vars import *
 from Network import Network
@@ -21,26 +22,25 @@ if __name__ == "__main__":
 
     # # For auto testing with shell
     try:
-        conv1 = int(sys.argv[1])
-        conv2 = int(sys.argv[2])
-        conv3 = int(sys.argv[3])
-        conv4 = int(sys.argv[4])
-        conv5 = int(sys.argv[5])
-        fc = int(sys.argv[6])
+        conv2 = int(sys.argv[1])
+        conv3 = int(sys.argv[2])
+        conv4 = int(sys.argv[3])
+        conv5 = int(sys.argv[4])
+        conv6 = int(sys.argv[5])
 
     except Exception as ex:
-        conv1 = size_conv_layer1
-        conv2 = size_conv_layer3
-        conv3 = size_conv_layer5
-        conv4 = size_conv_layer7
-        conv5 = size_conv_layer9
-        fc = size_fc_layer1
+        conv2 = size_conv_layer2
+        conv3 = size_conv_layer3
+        conv4 = size_conv_layer4
+        conv5 = size_conv_layer5
+        conv6 = size_conv_layer6
 
     try:
         tot_time = ExecutionTime("TOTAL")
-        network = Network(conv1, conv2, conv3, conv4, fc)
+        network = Network(conv2, conv3, conv4, conv5, conv6)
         input_set = SignalSet()
         answer_set = SignalSet()
+        answer_bit_set = SignalSet()
         index_set = SignalSet()
         read_random_index(index_set)
 
@@ -52,10 +52,11 @@ if __name__ == "__main__":
     read_time = ExecutionTime("READ")
     for file_name in file_name_list:
         try:
-            input, answer = read_file(file_name)
-            input, answer = make_set(input, answer, index_set)
+            input, answer, answer_bit = read_file(file_name)
+            input, answer, answer_bit = make_set(input, answer, answer_bit, index_set)
             input_set.concatenate(input)
             answer_set.concatenate(answer)
+            answer_bit_set.concatenate(answer_bit)
 
         except Exception as ex:
             print("[main_train.py: read]", end=" ")
@@ -75,10 +76,23 @@ if __name__ == "__main__":
     try:
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
+
         input_set.train = np.array(input_set.train)
+        input_set.train = input_set.train.reshape(
+            input_set.train.shape[0], 1, input_set.train.shape[1], 1)
+
         answer_set.train = np.array(answer_set.train)
+        answer_set.train = answer_set.train.reshape(
+            answer_set.train.shape[0], 1, answer_set.train.shape[1], 1)
+
         input_set.validation = np.array(input_set.validation)
+        input_set.validation = input_set.validation.reshape(
+            input_set.validation.shape[0], 1, input_set.validation.shape[1], 1)
+
         answer_set.validation = np.array(answer_set.validation)
+        answer_set.validation = answer_set.validation.reshape(
+            answer_set.validation.shape[0], 1, answer_set.validation.shape[1], 1)
+
         hist = network.train_model(
             input_set.train, answer_set.train, (input_set.validation, answer_set.validation))
         train_time.stop(True)
@@ -89,12 +103,15 @@ if __name__ == "__main__":
 
     try:
         test_time = ExecutionTime("TEST")
+
         input_set.test = np.array(input_set.test)
-        answer_set.test = np.array(answer_set.test)
+        input_set.test = input_set.test.reshape(
+            input_set.test.shape[0], 1, input_set.test.shape[1], 1)
+
         network = Network()
         network.restore_model(execute_time)
         success, success_bit, ber = test_set(
-            "SUMMARY", network.test_model(input_set.test), answer_set.test)
+            "SUMMARY", network.test_model(input_set.test), answer_bit_set.test)
         test_time.stop(False)
 
     except Exception as ex:

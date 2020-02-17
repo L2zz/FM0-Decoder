@@ -29,7 +29,9 @@ mask1H += [-1.0] * num_half_bit
 def decode_data(sample):
   try:
     start, state = detect_preamble(sample)
-    shift_range = [i for i in range(-3, 4)]
+
+    # window with: 1
+    shift_range = [i for i in range(0, 1)]
 
     decoded_bit = []
     for bit in range(bit_data):
@@ -40,7 +42,7 @@ def decode_data(sample):
         mask0 = mask0L
         mask1 = mask1L
 
-      max_score = 0
+      max_score = -987654321
       max_value = -1
       cur_shift = 0
 

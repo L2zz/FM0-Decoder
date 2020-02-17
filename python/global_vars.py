@@ -3,73 +3,40 @@ Define network structure
 """
 # select model
 import datetime
-tail = "_enc256"
-type = "_vgg"
+tail = "_ae"
 sample_type = "org"
-repetition = 1
 
 # Network
-isCNN = True
 isEarlyStop = True
 dropout_rate = 0.
 
-if isCNN:
-    learning_rate = 0.001
-    learning_epoch = 100
-    batch_size = 200
+learning_rate = 0.001
+learning_epoch = 100
+batch_size = 200
 
-    size_kernel = 5
-    size_pool = 2
-    padding = "same"
+size_kernel = 5
+size_pool = 2
+padding = "same"
 
-    size_input_layer = 7300
+size_input_layer = 7300
 
-    size_conv_layer1 = 32
-    size_conv_layer2 = 32
+size_conv_layer1 = 1
+size_conv_layer2 = 40
+size_conv_layer3 = 20
+size_conv_layer4 = 20
+size_conv_layer5 = 20
+size_conv_layer6 = 40
+size_conv_layer7 = 1
 
-    size_conv_layer3 = 64
-    size_conv_layer4 = 64
+size_deconv_layer1 = size_conv_layer7
+size_deconv_layer2 = size_conv_layer6
+size_deconv_layer3 = size_conv_layer5
+size_deconv_layer4 = size_conv_layer4
+size_deconv_layer5 = size_conv_layer3
+size_deconv_layer6 = size_conv_layer2
+size_deconv_layer7 = size_conv_layer1
 
-    size_conv_layer5 = 128
-    size_conv_layer6 = 128
-
-    size_conv_layer7 = 256
-    size_conv_layer8 = 256
-
-    size_conv_layer9 = 256
-    size_conv_layer10 = 256
-
-    size_fc_layer1 = 1024
-    size_fc_layer2 = 1024
-    size_fc_layer3 = 1024
-
-    size_output_layer = 268
-
-elif sample_type == "org":
-    learning_rate = 0.00005
-    learning_epoch = 100
-
-    size_input_layer = 7300
-    size_hidden_layer = 3650
-    size_hidden_layer2 = 3650
-    size_hidden_layer3 = 6700
-    size_hidden_layer4 = 6700
-    size_hidden_layer5 = 1340
-    size_hidden_layer6 = 1340
-    size_output_layer = 268 * repetition
-
-elif sample_type == "128bit":
-    learning_rate = 0.001
-    learning_epoch = 50
-
-    size_input_layer = 6400
-    size_hidden_layer = 3200
-    size_hidden_layer2 = 256
-    size_hidden_layer3 = 3200
-    size_hidden_layer4 = 256
-    size_hidden_layer5 = 3200
-    size_hidden_layer6 = 0  # not used
-    size_output_layer = 256 * repetition
+size_output_layer = size_input_layer
 
 
 """
