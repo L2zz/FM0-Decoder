@@ -209,16 +209,24 @@ class Network(tf.keras.Model):
 
     def train_model(self, input, answer, validation):
         try:
+            early_stopping = tf.keras.callbacks.EarlyStopping(
+                monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
             best = tf.keras.callbacks.ModelCheckpoint(filepath=model_full_path, monitor='val_loss',
                                                       verbose=1, save_best_only=True)
             if isEarlyStop:
-                early_stopping = tf.keras.callbacks.EarlyStopping(
-                    monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
-                hist = self.model.fit(input, answer, batch_size=batch_size,
-                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping, best])
+                if isBestSave:
+                    hist = self.model.fit(input, answer, batch_size=batch_size,
+                                          epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping, best])
+                else:
+                    hist = self.model.fit(input, answer, batch_size=batch_size,
+                                          epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping])
             else:
-                hist = self.model.fit(input, answer, batch_size=batch_size,
-                                      epochs=learning_epoch, validation_data=validation, callbacks=[early_stopping, best])
+                if isBestSave:
+                    hist = self.model.fit(input, answer, batch_size=batch_size,
+                                          epochs=learning_epoch, validation_data=validation, callbacks=[best])
+                else:
+                    hist = self.model.fit(input, answer, batch_size=batch_size,
+                                          epochs=learning_epoch, validation_data=validation, callbacks=[])
 
             file = open(log_full_path, "w")
             file.write("loss\n")

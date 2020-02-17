@@ -11,6 +11,7 @@ repetition = 1
 # Network
 isCNN = True
 isEarlyStop = True
+isBestSave = False
 dropout_rate = 0.
 
 if isCNN:
