@@ -8,6 +8,7 @@ sample_type = "org"
 
 # Network
 isEarlyStop = True
+isBestSave = False
 dropout_rate = 0.
 
 learning_rate = 0.001
