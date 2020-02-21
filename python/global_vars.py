@@ -3,39 +3,40 @@ Define network structure
 """
 # select model
 import datetime
-tail = "_ae"
-sample_type = "org"
+tail = "_6850"
 
 # Network
 isEarlyStop = True
 isBestSave = False
 dropout_rate = 0.
 
-learning_rate = 0.001
+learning_rate = 0.0005
 learning_epoch = 100
 batch_size = 200
 
 size_kernel = 5
-size_pool = 2
+size_pool = (1, 2)
 padding = "same"
 
-size_input_layer = 7300
+size_input_layer = 6850
 
-size_conv_layer1 = 1
-size_conv_layer2 = 40
-size_conv_layer3 = 20
-size_conv_layer4 = 20
-size_conv_layer5 = 20
-size_conv_layer6 = 40
-size_conv_layer7 = 1
+size_conv_layer1 = 32
+size_conv_layer2 = 32
 
-size_deconv_layer1 = size_conv_layer7
-size_deconv_layer2 = size_conv_layer6
-size_deconv_layer3 = size_conv_layer5
-size_deconv_layer4 = size_conv_layer4
-size_deconv_layer5 = size_conv_layer3
-size_deconv_layer6 = size_conv_layer2
-size_deconv_layer7 = size_conv_layer1
+size_conv_layer3 = 64
+size_conv_layer4 = 64
+
+size_conv_layer5 = 128
+size_conv_layer6 = 128
+
+size_deconv_layer1 = size_conv_layer6
+size_deconv_layer2 = size_conv_layer5
+size_deconv_layer3 = size_conv_layer4
+size_deconv_layer4 = size_conv_layer3
+size_deconv_layer5 = size_conv_layer2
+size_deconv_layer6 = size_conv_layer1
+
+size_deconv_layer7 = 1
 
 size_output_layer = size_input_layer
 
@@ -53,16 +54,15 @@ extra_length = bit_extra * num_half_bit * 2
 """
 Set data path
 """
-if sample_type == "org":
-    data_path = "data/D_org_std/"
-elif sample_type == "128bit":
-    data_path = "data/D_128bit_std_fitIndex/"
+data_path = "data/IQ_corr_std_clip/"
+answer_path = "data/databit_6850/"
+bit_path = "data/databit/"
 
 """
 For random indexing
 """
-RN_tail = "_RN2"
-RN_set = "RN_1000_1"
+RN_tail = "_RN3"
+RN_set = "RN_500_1"
 RN_path = "data/random_index/" + RN_set
 
 """
@@ -80,7 +80,7 @@ log_full_path = log_path + execute_time
 Define train/test set
 """
 # define set
-file_size = 1000
+file_size = 500
 ratio_test_per_train = 0.2
 ratio_validation_per_train = 0.2
 

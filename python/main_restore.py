@@ -5,7 +5,7 @@ from global_vars import *
 from Network import Network
 from ExecutionTime import ExecutionTime
 from SignalSet import SignalSet
-from read_testSet import read_testSet
+from read_test_file import read_test_file
 from test_set import test_set
 
 
@@ -50,10 +50,8 @@ if __name__ == "__main__":
 
         for file_name in file_name_list:
             try:
-                input, answer = read_testSet(file_name)
+                input, answer = read_test_file(file_name)
                 input = np.array(input)
-                input = input.reshape(
-                    input.shape[0], 1, input.shape[1], 1)
                 answer = np.array(answer)
                 success, success_bit, ber = test_set(
                     file_name, network.test_model(input), answer)

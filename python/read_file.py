@@ -4,43 +4,41 @@ from tqdm import tqdm
 
 def read_file(file_name):
     try:
-        file = open(data_path + file_name + "_sample", "r")
+        ifile = open(data_path + file_name + "_Isignal", "r")
+        qfile = open(data_path + file_name + "_Qsignal", "r")
         input_signals = []
 
         for n in tqdm(range(file_size), desc=file_name, ncols=80, unit="signal"):
-            line = file.readline().rstrip(" \n")
-            if not line:
-                break
-            data = line.split(" ")
-            data = [float(i) for i in data]
-            input_signals.append(data)
+            idata = ifile.readline().rstrip().split(" ")
+            qdata = qfile.readline().rstrip().split(" ")
+            data = [[float(idata[i]), float(qdata[i])] for i in range(len(idata))]
+            input_signals.append([data])
 
-        file.close()
+        ifile.close()
+        qfile.close()
 
-        file = open(data_path + file_name + "_answer" + tail, "r")
+        file = open(answer_path + file_name + "_databit" + tail, "r")
         answer_signals = []
 
         for n in range(file_size):
-            line = file.readline().rstrip()
-            if not line:
-                break
-            data = line.split(" ")
-            data = [float(i) for i in data]
-            answer_signals.append(data)
+            answer = file.readline().rstrip().split(" ")
+            answer = [[float(i), float(i)] for i in answer]
+            answer_signals.append([answer])
 
         file.close()
 
-        file = open(data_path + file_name + "_databit", "r")
+        file = open(bit_path + file_name + "_databit", "r")
         answer_bits = []
 
         for n in range(file_size):
             line = file.readline().rstrip()
             if not line:
                 break
-            data = [int(i) for i in line]
-            answer_bits.append(data)
+            bits = [int(i) for i in line]
+            answer_bits.append(bits)
 
         file.close()
+
         return input_signals, answer_signals, answer_bits
 
     except Exception as ex:

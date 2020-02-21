@@ -10,7 +10,8 @@ def test_sample(test, answer):
   try:
     count = 0
 
-    decoded_bit = decode_data(test.reshape(test.shape[0]))
+    add_iq = test.sum(axis=1)
+    decoded_bit = decode_data(add_iq)
 
     for bit_idx in range(bit_data):
       if decoded_bit[bit_idx] == answer[bit_idx]:

@@ -1,6 +1,6 @@
 import numpy as np
 
-tot_size = 1000
+tot_size = 500
 test_ratio = 0.2
 val_ratio = 0.2
 
@@ -15,7 +15,7 @@ if __name__ == "__main__":
     tot = np.arange(tot_size)
     np.random.shuffle(tot)
 
-    file = open("../data/random_index/new_set", "w")
+    file = open("../data/random_index/RN_500_1", "w")
 
     # train set
     for idx in range(train_size):
