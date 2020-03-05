@@ -34,10 +34,9 @@ if __name__ == "__main__":
     read_time = ExecutionTime("READ")
     for file_name in file_name_list:
         try:
-            input, answer = read_file(file_name)
-            input, answer = make_set(input, answer, index_set)
+            input = read_file(file_name)
+            input = make_set(input, index_set)
             input_set.concatenate(input)
-            answer_set.concatenate(answer)
 
         except Exception as ex:
             print("[main_train.py: read]", end=" ")
@@ -47,7 +46,6 @@ if __name__ == "__main__":
         random_index = [i for i in range(len(input_set.train))]
         random.shuffle(random_index)
         input_set.random_train_set(random_index)
-        answer_set.random_train_set(random_index)
         read_time.stop(True)
 
     except Exception as ex:
@@ -58,14 +56,12 @@ if __name__ == "__main__":
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
         input_set.train = np.array(input_set.train)
-        answer_set.train = np.array(answer_set.train)
         input_set.validation = np.array(input_set.validation)
-        answer_set.validation = np.array(answer_set.validation)
         if isCNN:
             input_set.train = input_set.train[:, :, np.newaxis]
             input_set.validation = input_set.validation[:, :, np.newaxis]
-        hist = netowrk.train_model(
-            input_set.train, answer_set.train, (input_set.validation, answer_set.validation))
+        hist = network.train_model(
+            input_set.train, input_set.train, (input_set.validation, input_set.validation))
         train_time.stop(True)
 
     except Exception as ex:
@@ -75,11 +71,9 @@ if __name__ == "__main__":
     try:
         test_time = ExecutionTime("TEST")
         input_set.test = np.array(input_set.test)
-        answer_set.test = np.array(answer_set.test)
         if isCNN:
             input_set.test = input_set.test[:, :, np.newaxis]
-        success, success_bit, ber = test_set(
-            "SUMMARY", netowrk.test_model(input_set.test), answer_set.test)
+        loss = network.test_model(input_set.test)
         test_time.stop(False)
 
     except Exception as ex:
@@ -89,10 +83,7 @@ if __name__ == "__main__":
     try:
         tot_time.stop(False)
         print("\n\n\n\t\t***** SUMMARY *****")
-        print("\tTEST RESULT:\t" + str(success) +
-              " / " + str(len(input_set.test)), end=" ")
-        print("(" + str(round(100 * (float(success) / len(input_set.test)), 2)) + "%)")
-        print("\tBER:\t\t" + str(round(100 * ber, 2)) + "%")
+        print("\tTEST RESULT:\t [LOSS] " + str(loss))
         print("\t\t*****\t*****\t*****")
         tot_time.print()
         print("\t\t*****\t*****\t*****")

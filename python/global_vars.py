@@ -10,9 +10,9 @@ isEarlyStop = True
 isBestSave = False
 dropout_rate = 0.
 
-learning_rate = 0.0005
-learning_epoch = 100
-batch_size = 200
+learning_rate = 0.001
+learning_epoch = 50
+batch_size = 100
 
 size_kernel = 5
 size_pool = (1, 2)
@@ -54,16 +54,16 @@ extra_length = bit_extra * num_half_bit * 2
 """
 Set data path
 """
-data_path = "data/IQ_corr_std_clip/"
-answer_path = "data/databit_6850/"
-bit_path = "data/databit/"
+data_path = "../sin-decode/data/IQ_corr_zerostd_clip/"
+answer_path = "../sin-decode/data/databit_6850/"
+bit_path = "../sin-decode/data/databit/"
 
 """
 For random indexing
 """
 RN_tail = "_RN3"
-RN_set = "RN_500_1"
-RN_path = "data/random_index/" + RN_set
+RN_set = "RN_200_1"
+RN_path = "../sin-decode/data/random_index/" + RN_set
 
 """
 For logging
@@ -80,7 +80,7 @@ log_full_path = log_path + execute_time
 Define train/test set
 """
 # define set
-file_size = 500
+file_size = 200
 ratio_test_per_train = 0.2
 ratio_validation_per_train = 0.2
 
