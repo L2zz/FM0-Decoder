@@ -54,7 +54,7 @@ class Network(tf.keras.Model):
 
     def build_model(self):
         try:
-            input_sig = Input(shape=(1, 6852, 2))
+            input_sig = Input(shape=(1, 6848, 1))
 
             x = Conv2D(16, (1, 3), activation='relu', padding='same')(input_sig)
             x = MaxPooling2D((1, 2), padding='same')(x)
@@ -67,9 +67,9 @@ class Network(tf.keras.Model):
             x = UpSampling2D((1, 2))(x)
             x = Conv2D(8, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
-            x = Conv2D(16, (1, 3), activation='relu')(x)
+            x = Conv2D(16, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
-            decoded = Conv2D(2, (1, 3), activation='sigmoid', padding='same')(x)
+            decoded = Conv2D(1, (1, 3), activation='sigmoid', padding='same')(x)
 
             return tf.keras.Model(input_sig, decoded)
 

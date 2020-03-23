@@ -4,22 +4,17 @@ from tqdm import tqdm
 
 def read_file(file_name):
     try:
-        ifile = open(data_path + file_name + "_Isignal", "r")
-        qfile = open(data_path + file_name + "_Qsignal", "r")
+        file = open(data_path + file_name + "_signal", "r")
         input_signals = []
 
         for n in tqdm(range(file_size), desc=file_name, ncols=80, unit="signal"):
-            idata = ifile.readline().rstrip().split(" ")
-            qdata = qfile.readline().rstrip().split(" ")
-            idata.insert(0, idata[0])
-            idata.insert(-1, idata[-1])
-            qdata.insert(0, qdata[0])
-            qdata.insert(-1, qdata[-1])
-            data = [[float(idata[i]), float(qdata[i])] for i in range(len(idata))]
+            data = file.readline().rstrip().split(" ")
+            del data[0]
+            del data[-1]
+            data = [[float(data[i])] for i in range(len(data))]
             input_signals.append([data])
 
-        ifile.close()
-        qfile.close()
+        file.close()
 
         return input_signals
 

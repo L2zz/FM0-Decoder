@@ -54,7 +54,7 @@ extra_length = bit_extra * num_half_bit * 2
 """
 Set data path
 """
-data_path = "../sin-decode/data/IQ_corr_zerostd_clip/"
+data_path = "../sin-decode/data/Amp_zerostd_clip/"
 answer_path = "../sin-decode/data/databit_6850/"
 bit_path = "../sin-decode/data/databit/"
 
