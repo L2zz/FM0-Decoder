@@ -10,8 +10,8 @@ isEarlyStop = True
 isBestSave = False
 dropout_rate = 0.
 
-learning_rate = 0.001
-learning_epoch = 50
+learning_rate = 0.005
+learning_epoch = 200
 batch_size = 100
 
 size_kernel = 5
@@ -55,7 +55,7 @@ extra_length = bit_extra * num_half_bit * 2
 Set data path
 """
 data_path = "../sin-decode/data/IQ_corr_zerostd_clip/"
-answer_path = "../sin-decode/data/databit_6850/"
+answer_path = "../sin-decode/data/databit_zero_6850/"
 bit_path = "../sin-decode/data/databit/"
 
 """
@@ -99,3 +99,6 @@ for a in ["100", "200", "300", "400"]:
     for b in ["0", "l100", "r100"]:
         for c in ["0", "45", "90", "135"]:
             file_name_list.append(a + "_" + b + "_" + c)
+
+# good train
+# file_name_list.append("200_0_0")

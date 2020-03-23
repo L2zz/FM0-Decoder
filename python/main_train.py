@@ -1,6 +1,8 @@
 import os
 import random
+import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
 
 from global_vars import *
 from Network import Network
@@ -11,18 +13,21 @@ from read_file import read_file
 from make_set import make_set
 from test_set import test_set
 
+from tensorflow.python.client import device_lib
 
 if __name__ == "__main__":
 
     # Set GPU device to run
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
     try:
         tot_time = ExecutionTime("TOTAL")
         network = Network()
         input_set = SignalSet()
         answer_set = SignalSet()
+        answer_bit_set = SignalSet()
         index_set = SignalSet()
         read_random_index(index_set)
 
@@ -34,9 +39,15 @@ if __name__ == "__main__":
     read_time = ExecutionTime("READ")
     for file_name in file_name_list:
         try:
-            input = read_file(file_name)
-            input = make_set(input, index_set)
+            input, answer, answer_bit = read_file(file_name)
+            input, answer, answer_bit = make_set(
+                input, answer, answer_bit, index_set)
+            # plt.plot(np.array(input.train)[0, 0, :, 0])
+            # plt.plot(np.array(answer.train)[0, 0, :, 0])
+            # plt.show()
             input_set.concatenate(input)
+            answer_set.concatenate(answer)
+            answer_bit_set.concatenate(answer_bit)
 
         except Exception as ex:
             print("[main_train.py: read]", end=" ")
@@ -46,6 +57,7 @@ if __name__ == "__main__":
         random_index = [i for i in range(len(input_set.train))]
         random.shuffle(random_index)
         input_set.random_train_set(random_index)
+        answer_set.random_train_set(random_index)
         read_time.stop(True)
 
     except Exception as ex:
@@ -56,9 +68,11 @@ if __name__ == "__main__":
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
         input_set.train = np.array(input_set.train)
+        answer_set.train = np.array(answer_set.train)
         input_set.validation = np.array(input_set.validation)
+        answer_set.validation = np.array(answer_set.validation)
         hist = network.train_model(
-            input_set.train, input_set.train, (input_set.validation, input_set.validation))
+            input_set.train, answer_set.train, (input_set.validation, answer_set.validation))
         train_time.stop(True)
 
     except Exception as ex:
@@ -68,7 +82,10 @@ if __name__ == "__main__":
     try:
         test_time = ExecutionTime("TEST")
         input_set.test = np.array(input_set.test)
-        loss = network.test_model(input_set.test)
+        answer_set.test = np.array(answer_set.test)
+        answer_bit_set.test = np.array(answer_bit_set.test)
+        success, success_bit, ber = test_set(network.test_model(input_set.test, answer_set.test),
+                                             answer_bit_set.test)
         test_time.stop(False)
 
     except Exception as ex:
@@ -78,7 +95,10 @@ if __name__ == "__main__":
     try:
         tot_time.stop(False)
         print("\n\n\n\t\t***** SUMMARY *****")
-        print("\tTEST RESULT:\t [LOSS] " + str(loss))
+        print("\tTEST RESULT:\t" + str(success) +
+              " / " + str(len(input_set.test)), end=" ")
+        print("(" + str(round(100 * (float(success) / len(input_set.test)), 2)) + "%)")
+        print("\tBER:\t\t" + str(round(100 * ber, 2)) + "%")
         print("\t\t*****\t*****\t*****")
         tot_time.print()
         print("\t\t*****\t*****\t*****")

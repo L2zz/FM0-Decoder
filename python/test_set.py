@@ -1,5 +1,7 @@
 import sys
+import math
 import numpy as np
+import matplotlib.pyplot as plt
 from global_vars import *
 from tqdm import tqdm
 
@@ -11,7 +13,27 @@ def test_sample(test, answer):
     count = 0
 
     add_iq = test.sum(axis=1)
-    decoded_bit = decode_data(add_iq)
+    avg_iq = add_iq / 2
+
+    avg = 0
+    for iq in avg_iq:
+        avg += iq
+    avg /= len(avg_iq)
+
+    std = 0
+    for iq in avg_iq:
+        std += pow(iq - avg, 2)
+    std /= len(avg_iq)
+    std = math.sqrt(std)
+
+    std_avg_iq = []
+    for iq in avg_iq:
+        val = (iq - avg) / std
+        if val > 1: std_avg_iq.append(float(1))
+        elif val < -1: std_avg_iq.append(float(-1))
+        else: std_avg_iq.append(val)
+
+    decoded_bit = decode_data(std_avg_iq)
 
     for bit_idx in range(bit_data):
       if decoded_bit[bit_idx] == answer[bit_idx]:
@@ -25,7 +47,7 @@ def test_sample(test, answer):
 
 
 
-def test_set(file_name, test, answer):
+def test_set(test, answer):
   try:
     success = 0
     success_bit = np.zeros(129)
@@ -37,7 +59,7 @@ def test_set(file_name, test, answer):
         success += 1
 
     file = open(log_full_path, "a")
-    file.write("\t\t\t***** " + file_name + " *****\n\n")
+    file.write("\t\t\t***** Summary *****\n\n")
     file.write(str(success) + " / " + str(len(test)))
     file.write(" (" + str(round(100 * (float(success) / len(test)), 2)) + "%)\n\n")
     for idx in range(129):

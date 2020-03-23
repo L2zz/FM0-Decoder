@@ -54,20 +54,28 @@ class Network(tf.keras.Model):
 
     def build_model(self):
         try:
-            input_sig = Input(shape=(1, 6852, 2))
+            input_sig = Input(shape=(1, 6848, 2))
 
-            x = Conv2D(16, (1, 3), activation='relu', padding='same')(input_sig)
-            x = MaxPooling2D((1, 2), padding='same')(x)
-            x = Conv2D(8, (1, 3), activation='relu', padding='same')(x)
-            x = MaxPooling2D((1, 2), padding='same')(x)
-            x = Conv2D(8, (1, 3), activation='relu', padding='same')(x)
+            x = Conv2D(128, (1, 3), activation='relu', padding='same')(input_sig)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
             encoded = MaxPooling2D((1, 2), padding='same')(x)
 
-            x = Conv2D(8, (1, 3), activation='relu', padding='same')(encoded)
+            x = Conv2D(32, (1, 5), activation='relu', padding='same')(encoded)
             x = UpSampling2D((1, 2))(x)
-            x = Conv2D(8, (1, 3), activation='relu', padding='same')(x)
+            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
-            x = Conv2D(16, (1, 3), activation='relu')(x)
+            x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
+            x = UpSampling2D((1, 2))(x)
+            x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
+            x = UpSampling2D((1, 2))(x)
+            x = Conv2D(128, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
             decoded = Conv2D(2, (1, 3), activation='sigmoid', padding='same')(x)
 
@@ -126,18 +134,24 @@ class Network(tf.keras.Model):
                 model_path + name)
             print("[Loading Success]")
 
-    def test_model(self, input):
+    def test_model(self, input, answer):
         try:
             predict = self.model.predict(input)
-            for i in range(len(input)):
-                if i % 10 == 0:
-                    plt.plot(input[i, 0, :, 0])
-                    plt.plot(predict[i, 0, :, 0])
-                    plt.show()
+            # plt.plot(answer[0, 0, :, 0])
+            # plt.plot(predict[0, 0, :, 0])
+            # plt.show()
+            # for i in range(len(input)):
+            #     if i % 10 == 0:
+            #         plt.plot(answer[i, 0, :, 0])
+            #         plt.plot(predict[i, 0, :, 0])
+            #         plt.show()
 
-            loss = self.model.evaluate(input, input)
+            loss = self.model.evaluate(input, answer)
+            print("\n\t\t***** LOSS *****")
+            print("\tLOSS: " + str(loss))
+            print("\n\t\t****************")
 
-            return loss
+            return predict
 
         except Exception as ex:
             print("[Network.test_model]", end=" ")
