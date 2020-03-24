@@ -2,7 +2,7 @@ import datetime
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D
+from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, UpSampling2D, ZeroPadding2D
 
 from global_vars import *
 
@@ -54,22 +54,27 @@ class Network(tf.keras.Model):
 
     def build_model(self):
         try:
-            input_sig = Input(shape=(1, 6848, 2))
+            input_sig = Input(shape=(1, 6848, 1))
 
-            x = Conv2D(128, (1, 3), activation='relu', padding='same')(input_sig)
+            x = Conv2D(256, (1, 3), activation='relu', padding='same')(input_sig)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(128, (1, 3), activation='relu', padding='same')(x)
+            x = MaxPooling2D((1, 2))(x)
+            x = Conv2D(128, (1, 3), activation='relu', padding='same')(x)
             x = MaxPooling2D((1, 2))(x)
             x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
             x = MaxPooling2D((1, 2))(x)
             x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
             x = MaxPooling2D((1, 2))(x)
-            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
+            x = Conv2D(32, (1, 3), activation='relu', padding='same')(x)
             x = MaxPooling2D((1, 2))(x)
-            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
-            encoded = MaxPooling2D((1, 2), padding='same')(x)
+            x = Conv2D(32, (1, 3), activation='relu', padding='same')(x)
+            encoded = MaxPooling2D((1, 2))(x)
 
-            x = Conv2D(32, (1, 5), activation='relu', padding='same')(encoded)
+            x = Conv2D(32, (1, 3), activation='relu', padding='same')(encoded)
             x = UpSampling2D((1, 2))(x)
-            x = Conv2D(32, (1, 5), activation='relu', padding='same')(x)
+            x = ZeroPadding2D(padding=((0, 0), (0, 1)))(x)
+            x = Conv2D(32, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
             x = Conv2D(64, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
@@ -77,7 +82,11 @@ class Network(tf.keras.Model):
             x = UpSampling2D((1, 2))(x)
             x = Conv2D(128, (1, 3), activation='relu', padding='same')(x)
             x = UpSampling2D((1, 2))(x)
-            decoded = Conv2D(2, (1, 3), activation='sigmoid', padding='same')(x)
+            x = Conv2D(128, (1, 3), activation='relu', padding='same')(x)
+            x = UpSampling2D((1, 2))(x)
+            x = Conv2D(256, (1, 3), activation='relu', padding='same')(x)
+            x = UpSampling2D((1, 2))(x)
+            decoded = Conv2D(1, (1, 3), activation='sigmoid', padding='same')(x)
 
             return tf.keras.Model(input_sig, decoded)
 
@@ -140,11 +149,11 @@ class Network(tf.keras.Model):
             # plt.plot(answer[0, 0, :, 0])
             # plt.plot(predict[0, 0, :, 0])
             # plt.show()
-            # for i in range(len(input)):
-            #     if i % 10 == 0:
-            #         plt.plot(answer[i, 0, :, 0])
-            #         plt.plot(predict[i, 0, :, 0])
-            #         plt.show()
+            for i in range(len(input)):
+                if i % 100 == 0:
+                    plt.plot(answer[i, 0, :, 0])
+                    plt.plot(predict[i, 0, :, 0])
+                    plt.show()
 
             loss = self.model.evaluate(input, answer)
             print("\n\t\t***** LOSS *****")
