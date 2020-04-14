@@ -30,11 +30,11 @@ execute_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 # file_name = execute_time
 # file_name = "student3000"
 # file_name = "teacher3000"
-file_name = "kd_1"
+file_name = "kd"
 log_path = "../log/"
 log_file_path = log_path + file_name
 model_path = "../model/"
-teacher_file_path = model_path + "kd"
+teacher_file_path = model_path + "teacher3000"
 model_file_path = model_path + file_name
 
 RN_tail = 1
@@ -50,4 +50,4 @@ batch_size = 64
 isEarlyStop = True
 isBestSave = False
 
-alpha = 0.3
+alpha = 0.0

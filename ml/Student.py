@@ -1,3 +1,4 @@
+import time
 import datetime
 
 import numpy as np
@@ -86,10 +87,17 @@ class Student(tf.keras.Model):
             self.model = tf.keras.experimental.load_from_saved_model(model_file_path)
             self.model.summary()
 
+            begin = time.time()
             predict = self.model.predict(input)
-            plt.plot(answer[0])
-            plt.plot(predict[0])
-            plt.show()
+            end = time.time()
+            infertime_per_signal = (end-begin) / input.shape[0]
+            file = open(log_file_path, "a")
+            file.write('\nTIME PER SIGNAL: {:.8f}\n'.format(infertime_per_signal))
+            file.close()
+
+            # plt.plot(answer[0])
+            # plt.plot(predict[0])
+            # plt.show()
             # for i in range(len(input)):
             #     if i % 100 == 0:
             #         plt.plot(answer[i])
