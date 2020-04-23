@@ -117,7 +117,3 @@ def decode_data(sample):
     except Exception as ex:
         print("[decode_data.py]", end=" ")
         print(ex)
-
-def decode_data(sample):
-
-    return decoded_bit
