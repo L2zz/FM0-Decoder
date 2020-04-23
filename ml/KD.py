@@ -8,6 +8,8 @@ from tensorflow.keras.layers import Input, Dense, BatchNormalization, Activation
 from global_vars import *
 from decode_data import decode_enc256
 
+alpha = 0.0
+optimizer = tf.keras.optimizers.Adam(lr)
 
 class KD(tf.keras.Model):
 
@@ -15,10 +17,8 @@ class KD(tf.keras.Model):
         try:
             super(KD, self).__init__()
 
-            optimizer = tf.keras.optimizers.Adam(lr)
             self.model = self.build_model()
-            self.model.compile(
-                loss="mse", loss_weights=[alpha, (1 - alpha)], optimizer=optimizer)
+            self.model.compile(loss="mse", optimizer=optimizer)
             self.model.summary()
 
         except Exception as ex:
@@ -50,6 +50,7 @@ class KD(tf.keras.Model):
 
     def train_model(self, input, answer, validation):
         try:
+            mc = CustomLoss(alpha=alpha)
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
             best = tf.keras.callbacks.ModelCheckpoint(filepath=model_file_path, monitor='val_loss',
@@ -57,20 +58,19 @@ class KD(tf.keras.Model):
             if isEarlyStop:
                 if isBestSave:
                     hist = self.model.fit(input, answer, batch_size=batch_size,
-                                          epochs=epochs, validation_data=validation, callbacks=[early_stopping, best])
+                                          epochs=epochs, validation_data=validation, callbacks=[early_stopping, best, mc])
                 else:
                     hist = self.model.fit(input, answer, batch_size=batch_size,
-                                          epochs=epochs, validation_data=validation, callbacks=[early_stopping])
+                                          epochs=epochs, validation_data=validation, callbacks=[early_stopping, mc])
             else:
                 if isBestSave:
                     hist = self.model.fit(input, answer, batch_size=batch_size,
-                                          epochs=epochs, validation_data=validation, callbacks=[best])
+                                          epochs=epochs, validation_data=validation, callbacks=[best, mc])
                 else:
                     hist = self.model.fit(input, answer, batch_size=batch_size,
-                                          epochs=epochs, validation_data=validation, callbacks=[])
+                                          epochs=epochs, validation_data=validation, callbacks=[mc])
 
-            if not isBestSave:
-                tf.keras.experimental.export_saved_model(self.student, model_file_path)
+            tf.keras.experimental.export_saved_model(self.student, model_file_path)
 
             file = open(log_file_path, "w")
             file.write("loss\n")
@@ -84,3 +84,13 @@ class KD(tf.keras.Model):
         except Exception as ex:
             print("[KD.train_model]", end=" ")
             print(ex)
+
+class CustomLoss(tf.keras.callbacks.Callback):
+
+    def __init__(self, alpha):
+        self.alpha = alpha
+
+    def on_epoch_end(self, epoch, logs={}):
+        self.alpha += 0.1
+        self.model.compile(
+            loss="mse", loss_weights=[self.alpha, (1 - self.alpha)], optimizer=optimizer)

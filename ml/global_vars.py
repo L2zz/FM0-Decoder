@@ -30,7 +30,7 @@ execute_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 # file_name = execute_time
 # file_name = "student3000"
 # file_name = "teacher3000"
-file_name = "kd"
+file_name = "epoch-10"
 log_path = "../log/"
 log_file_path = log_path + file_name
 model_path = "../model/"
@@ -44,10 +44,8 @@ RN_file_path = data_dir + "random_index/" + RN_file_name
 """
 For model
 """
-epochs = 200
+epochs = 21
 lr = 0.001
 batch_size = 64
-isEarlyStop = True
+isEarlyStop = False
 isBestSave = False
-
-alpha = 0.0
