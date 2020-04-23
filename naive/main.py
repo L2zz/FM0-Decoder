@@ -1,3 +1,4 @@
+import time
 
 import numpy as np
 from tqdm import tqdm
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 
     success = 0
     success_bit = np.zeros(bit_data + 1)
+    tot_decode_time = 0
     for file_name in file_name_list:
         try:
             file_time = ExecutionTime(file_name)
@@ -31,8 +33,11 @@ if __name__ == "__main__":
             cur_success_bit = np.zeros(bit_data + 1)
             cur_success = 0
             num_signal = len(signal)
+            decode_time_per_file = 0
             for idx in tqdm(range(num_signal), desc="DECODING", ncols=100, unit=" signal"):
+                begin = time.time()
                 decoded_bit = decode_data(signal[idx])
+                end = time.time()
 
                 count = 0
                 for bit_idx in range(bit_data):
@@ -43,6 +48,9 @@ if __name__ == "__main__":
                     success += 1
                 cur_success_bit[count] += 1
                 success_bit[count] += 1
+                decode_time_per_file += end - begin
+            tot_decode_time += decode_time_per_file
+            print('{:.6f}'.format(decode_time_per_file/num_signal))
 
             print("\n\tRESULT: " + str(cur_success) +
                   " / " + str(test_file_num), end=" ")
@@ -61,6 +69,7 @@ if __name__ == "__main__":
             print("[main.py]", end=" ")
             print(ex)
             file_time.stop(False)
+    print('{:.6f}'.format(tot_decode_time/(len(file_name_list)*600)))
 
     print("\n\n\t*** SUMMARY ***")
     print("\tTOTALRESULT: " + str(success) +
