@@ -12,8 +12,6 @@ from Student import Student
 from KD import KD
 
 
-tot_test_file_num = len(file_name_list) * test_file_num
-
 if __name__ == "__main__":
 
     # Set GPU device to run
@@ -50,17 +48,17 @@ if __name__ == "__main__":
     try:
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
-        # model = Teacher()
+        model = Teacher()
         # model = Student()
-        # model.train_model(np.array(signal_train), np.array(enc256_train),
-        #                   (np.array(signal_valid), np.array(enc256_valid)))
+        model.train_model(np.array(signal_train), np.array(enc256_train),
+                          (np.array(signal_valid), np.array(enc256_valid)))
 
-        teacher = tf.keras.experimental.load_from_saved_model(teacher_file_path)
-        tpredict_train = teacher.predict(np.array(signal_train))
-        tpredict_valid = teacher.predict(np.array(signal_valid))
-        model = KD()
-        model.train_model(np.array(signal_train), [np.array(enc256_train), tpredict_train],
-                          (np.array(signal_valid), [np.array(enc256_valid), tpredict_valid]))
+        # teacher = tf.keras.experimental.load_from_saved_model(teacher_file_path)
+        # tpredict_train = teacher.predict(np.array(signal_train))
+        # tpredict_valid = teacher.predict(np.array(signal_valid))
+        # model = KD()
+        # model.train_model(np.array(signal_train), [np.array(enc256_train), tpredict_train],
+        #                   (np.array(signal_valid), [np.array(enc256_valid), tpredict_valid]))
         train_time.stop(True)
 
     except Exception as ex:

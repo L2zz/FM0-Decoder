@@ -17,6 +17,9 @@ for a in ["100", "200", "300", "400"]:
         for c in ["0", "45", "90", "135"]:
             file_name_list.append(a + "_" + b + "_" + c)
 
+# file_num = 1
+# file_name_list.append("100_0_0")
+
 """
 For file IO
 """
@@ -30,11 +33,11 @@ execute_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 # file_name = execute_time
 # file_name = "student3000"
 # file_name = "teacher3000"
-file_name = "kd"
+file_name = "teacher-new"
 log_path = "../log/"
 log_file_path = log_path + file_name
 model_path = "../model/"
-teacher_file_path = model_path + "teacher3000"
+teacher_file_path = model_path + "teacher-10-5"
 model_file_path = model_path + file_name
 
 RN_tail = 1
@@ -46,8 +49,8 @@ For model
 """
 epochs = 200
 lr = 0.001
-batch_size = 64
+batch_size = 1024
 isEarlyStop = True
-isBestSave = False
+isBestSave = True
 
-alpha = 0.0
+alpha = 0.3

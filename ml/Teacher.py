@@ -18,7 +18,8 @@ class Teacher(tf.keras.Model):
 
             optimizer = tf.keras.optimizers.Adam(lr)
             self.model = self.build_model()
-            self.model.compile(loss="mse", optimizer=optimizer)
+            self.model.compile(loss="mse", optimizer=optimizer,
+                               metrics=[decoding_rate])
             self.model.summary()
 
         except Exception as ex:
@@ -29,31 +30,23 @@ class Teacher(tf.keras.Model):
         try:
             input_layer = Input(shape=6850, name="teacher_input")
 
-            x = Dense(3350, name="teacher_1")(input_layer)
+            x = Dense(10000, name="teacher_1")(input_layer)
             x = BatchNormalization(name="teacher_batch_1")(x)
             x = Activation('relu', name="teacher_activation_1")(x)
 
-            x = Dense(3350, name="teacher_2")(x)
+            x = Dense(10000, name="teacher_2")(x)
             x = BatchNormalization(name="teacher_batch_2")(x)
             x = Activation('relu', name="teacher_activation_2")(x)
 
-            x = Dense(6700, name="teacher_3")(x)
+            x = Dense(5000, name="teacher_3")(x)
             x = BatchNormalization(name="teacher_batch_3")(x)
             x = Activation('relu', name="teacher_activation_3")(x)
 
-            x = Dense(6700, name="teacher_4")(x)
+            x = Dense(5000, name="teacher_4")(x)
             x = BatchNormalization(name="teacher_batch_4")(x)
             x = Activation('relu', name="teacher_activation_4")(x)
 
-            x = Dense(1340, name="teacher_5")(x)
-            x = BatchNormalization(name="teacher_batch_5")(x)
-            x = Activation('relu', name="teacher_activation_5")(x)
-
-            x = Dense(1340, name="teacher_6")(x)
-            x = BatchNormalization(name="teacher_batch_6")(x)
-            x = Activation('relu', name="teacher_activation_6")(x)
-
-            decoded = Dense(268, name="teacher_7")(x)
+            decoded = Dense(268, name="teacher_out")(x)
 
             return tf.keras.Model(input_layer, decoded)
 
@@ -64,9 +57,9 @@ class Teacher(tf.keras.Model):
     def train_model(self, input, answer, validation):
         try:
             early_stopping = tf.keras.callbacks.EarlyStopping(
-                monitor="val_loss", min_delta=0, patience=5, verbose=1, mode="min")
-            best = tf.keras.callbacks.ModelCheckpoint(filepath=model_file_path, monitor='val_loss',
-                                                      verbose=1, save_best_only=True)
+                monitor="val_decoding_rate", min_delta=0, patience=10, verbose=1, mode="max")
+            best = tf.keras.callbacks.ModelCheckpoint(filepath=model_file_path, monitor='val_decoding_rate',
+                                                      verbose=1, save_best_only=True, mode='max')
             if isEarlyStop:
                 if isBestSave:
                     hist = self.model.fit(input, answer, batch_size=batch_size,
@@ -83,13 +76,16 @@ class Teacher(tf.keras.Model):
                                           epochs=epochs, validation_data=validation, callbacks=[])
 
             if not isBestSave:
-                tf.keras.experimental.export_saved_model(self.model, model_file_path)
+                tf.keras.experimental.export_saved_model(
+                    self.model, model_file_path)
 
             file = open(log_file_path, "w")
             file.write("loss\n")
             file.write(str(hist.history['loss']) + "\n\n")
             file.write("val_loss\n")
             file.write(str(hist.history['val_loss']) + "\n\n")
+            file.write("val_decoding_rate\n")
+            file.write(str(hist.history['val_decoding_rate']) + "\n\n")
             file.close()
 
             return hist
@@ -100,16 +96,12 @@ class Teacher(tf.keras.Model):
 
     def test_model(self, input, answer):
         try:
-            self.model = tf.keras.experimental.load_from_saved_model(model_file_path)
+            # self.model = tf.keras.experimental.load_from_saved_model(model_file_path)
+            self.model = tf.keras.models.load_model(
+                model_file_path + "_best.h5", custom_objects={'decoding_rate': decoding_rate})
             self.model.summary()
 
-            begin = time.time()
             predict = self.model.predict(input)
-            end = time.time()
-            infertime_per_signal = (end-begin) / input.shape[0]
-            file = open(log_file_path, "a")
-            file.write('\nTIME PER SIGNAL: {:.8f}\n'.format(infertime_per_signal))
-            file.close()
 
             # plt.plot(answer[0])
             # plt.plot(predict[0])
@@ -119,6 +111,7 @@ class Teacher(tf.keras.Model):
             #         plt.plot(answer[i])
             #         plt.plot(predict[i])
             #         plt.show()
+
             success, success_bit, ber = decode_enc256(predict, answer)
 
             return success, success_bit, ber
@@ -126,3 +119,24 @@ class Teacher(tf.keras.Model):
         except Exception as ex:
             print("[Teacher.test_model]", end=" ")
             print(ex)
+
+
+def decoding_rate(y_true, y_pred):
+
+    num = tf.shape(y_pred)[0]
+    mask = tf.fill([num], 268)
+
+    zero_arr = tf.fill(tf.shape(y_pred), 0)
+    one_arr = tf.fill(tf.shape(y_pred), 1)
+    y_pred = tf.where(y_pred < 0.5, zero_arr, one_arr)
+    y_pred = tf.dtypes.cast(y_pred, tf.int32)
+    y_true = tf.dtypes.cast(y_true, tf.int32)
+
+    tmp = tf.math.equal(y_true, y_pred, name="eq1")
+    tmp = tf.math.count_nonzero(tmp, axis=1)
+    tmp = tf.dtypes.cast(tmp, tf.int32)
+    tmp = tf.math.equal(tmp, mask, name="eq2")
+    success = tf.math.count_nonzero(tmp)
+    success = tf.dtypes.cast(success, tf.int32)
+
+    return tf.math.divide(success, num)

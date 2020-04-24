@@ -9,10 +9,7 @@ from read_file import read_data_file, read_rn_file
 from ExecutionTime import ExecutionTime
 from Teacher import Teacher
 from Student import Student
-# from KD import KD
 
-
-tot_test_file_num = len(file_name_list) * test_file_num
 
 if __name__ == "__main__":
 
