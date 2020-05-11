@@ -31,13 +31,11 @@ enc256_path = data_dir + "databit_enc256/"
 
 execute_time = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
 # file_name = execute_time
-# file_name = "student3000"
-# file_name = "teacher3000"
-file_name = "teacher-new"
+file_name = "kd-2_2_1"
 log_path = "../log/"
 log_file_path = log_path + file_name
 model_path = "../model/"
-teacher_file_path = model_path + "teacher-10-5"
+teacher_file_path = model_path + "teacher-new-v2-nb"
 model_file_path = model_path + file_name
 
 RN_tail = 1
@@ -49,8 +47,8 @@ For model
 """
 epochs = 200
 lr = 0.001
-batch_size = 1024
+batch_size = 64
 isEarlyStop = True
 isBestSave = True
 
-alpha = 0.3
+alpha = 0.1

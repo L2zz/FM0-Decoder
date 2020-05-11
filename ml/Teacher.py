@@ -4,7 +4,7 @@ import time
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from tensorflow.keras.layers import Input, Dense, BatchNormalization, Activation
+from tensorflow.keras.layers import Input, Dense, BatchNormalization, Activation, Dropout
 
 from global_vars import *
 from decode_data import decode_enc256
@@ -31,19 +31,15 @@ class Teacher(tf.keras.Model):
             input_layer = Input(shape=6850, name="teacher_input")
 
             x = Dense(10000, name="teacher_1")(input_layer)
-            x = BatchNormalization(name="teacher_batch_1")(x)
             x = Activation('relu', name="teacher_activation_1")(x)
 
             x = Dense(10000, name="teacher_2")(x)
-            x = BatchNormalization(name="teacher_batch_2")(x)
             x = Activation('relu', name="teacher_activation_2")(x)
 
             x = Dense(5000, name="teacher_3")(x)
-            x = BatchNormalization(name="teacher_batch_3")(x)
             x = Activation('relu', name="teacher_activation_3")(x)
 
             x = Dense(5000, name="teacher_4")(x)
-            x = BatchNormalization(name="teacher_batch_4")(x)
             x = Activation('relu', name="teacher_activation_4")(x)
 
             decoded = Dense(268, name="teacher_out")(x)
@@ -58,7 +54,7 @@ class Teacher(tf.keras.Model):
         try:
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor="val_decoding_rate", min_delta=0, patience=10, verbose=1, mode="max")
-            best = tf.keras.callbacks.ModelCheckpoint(filepath=model_file_path, monitor='val_decoding_rate',
+            best = tf.keras.callbacks.ModelCheckpoint(filepath=model_file_path + "_best.h5", monitor='val_decoding_rate',
                                                       verbose=1, save_best_only=True, mode='max')
             if isEarlyStop:
                 if isBestSave:

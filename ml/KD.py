@@ -36,14 +36,11 @@ class KD(tf.keras.Model):
             x = Dense(2000, name="kd_2")(x)
             x = Activation('relu', name="kd_activation_2")(x)
 
-            x = Dense(2000, name="kd_3")(x)
+            x = Dense(1000, name="kd_3")(x)
             x = Activation('relu', name="kd_activation_3")(x)
 
-            x = Dense(2000, name="kd_4")(x)
-            x = Activation('relu', name="kd_activation_4")(x)
-
-            x = Dense(2000, name="kd_5")(x)
-            x = Activation('relu', name="kd_activation_5")(x)
+            # x = Dense(1000, name="kd_4")(x)
+            # x = Activation('relu', name="kd_activation_4")(x)
 
             student_output = Dense(268, name="kd_out")(x)
             self.student = tf.keras.Model(input_layer, student_output)

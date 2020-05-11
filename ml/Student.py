@@ -36,14 +36,11 @@ class Student(tf.keras.Model):
             x = Dense(2000, name="student_2")(x)
             x = Activation('relu', name="student_activation_2")(x)
 
-            x = Dense(2000, name="student_3")(x)
+            x = Dense(1000, name="student_3")(x)
             x = Activation('relu', name="student_activation_3")(x)
-
-            x = Dense(2000, name="student_4")(x)
-            x = Activation('relu', name="student_activation_4")(x)
-
-            x = Dense(2000, name="student_5")(x)
-            x = Activation('relu', name="student_activation_5")(x)
+            #
+            # x = Dense(2000, name="student_4")(x)
+            # x = Activation('relu', name="student_activation_4")(x)
 
             decoded = Dense(268, name="student_out")(x)
 
@@ -103,12 +100,12 @@ class Student(tf.keras.Model):
             predict = self.model.predict(input)
 
             # infertime_per_signal = 0
-            # for _ in range(100):
+            # for _ in range(10000):
             #     begin = time.time()
             #     predict = self.model.predict(input)
             #     end = time.time()
             #     infertime_per_signal += (end-begin) / input.shape[0]
-            # infertime_per_signal /= 100
+            # infertime_per_signal /= 10000
             # print('\nTIME PER SIGNAL: {:.8f}\n'.format(infertime_per_signal))
             # file = open(log_file_path, "a")
             # file.write('\nTIME PER SIGNAL: {:.8f}\n'.format(infertime_per_signal))

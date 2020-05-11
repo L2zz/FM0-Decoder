@@ -8,7 +8,7 @@ from global_vars import *
 from read_file import read_data_file, read_rn_file
 from ExecutionTime import ExecutionTime
 from Teacher import Teacher
-from Student import Student
+from Student import Student, decoding_rate
 from KD import KD
 
 
@@ -48,17 +48,18 @@ if __name__ == "__main__":
     try:
         print("\n\n\n\t\t\t***** TRAINING *****")
         train_time = ExecutionTime("TRAIN")
-        model = Teacher()
+        # model = Teacher()
         # model = Student()
-        model.train_model(np.array(signal_train), np.array(enc256_train),
-                          (np.array(signal_valid), np.array(enc256_valid)))
+        # model.train_model(np.array(signal_train), np.array(enc256_train),
+        #                   (np.array(signal_valid), np.array(enc256_valid)))
 
-        # teacher = tf.keras.experimental.load_from_saved_model(teacher_file_path)
-        # tpredict_train = teacher.predict(np.array(signal_train))
-        # tpredict_valid = teacher.predict(np.array(signal_valid))
-        # model = KD()
-        # model.train_model(np.array(signal_train), [np.array(enc256_train), tpredict_train],
-        #                   (np.array(signal_valid), [np.array(enc256_valid), tpredict_valid]))
+        teacher = tf.keras.models.load_model(
+            teacher_file_path + "_best.h5", custom_objects={'decoding_rate': decoding_rate})
+        tpredict_train = teacher.predict(np.array(signal_train))
+        tpredict_valid = teacher.predict(np.array(signal_valid))
+        model = KD()
+        model.train_model(np.array(signal_train), [np.array(enc256_train), tpredict_train],
+                          (np.array(signal_valid), [np.array(enc256_valid), tpredict_valid]))
         train_time.stop(True)
 
     except Exception as ex:
